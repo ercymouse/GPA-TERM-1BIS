@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GPA CALCULATE</title>
+    <!-- WhatsApp / Facebook Meta Tags -->
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:title"
+      content="🔥 GPA Calculator for Modern Academy Students"
+    />
+    <meta
+      property="og:description"
+      content="حاسبة GPA احترافية لطلاب مودرن أكاديمي 1_BIS – سريعة وسهلة."
+    />
+    <meta
+      property="og:image"
+      content="https://raw.githubusercontent.com/ercymouse/GPA-TERM-1BIS/main/assets/sticker.webp"
+    />
+    <meta
+      property="og:url"
+      content="https://ercymouse.github.io/GPA-TERM-1BIS/"
+    />
+    <meta property="og:site_name" content="Modern GPA Tool" />
+
+    <link rel="icon" href="images/sticker.webp" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#0f172a",
+              accent: "#14b8a6",
+              base: "#f8fafc",
+              popup: "#1e293b",
+              card: "#334155",
+            },
+            fontFamily: {
+              sans: ["Cairo", "sans-serif"],
+            },
+            keyframes: {
+              popup: {
+                "0%": {
+                  opacity: "0",
+                  transform: "translateY(20px) scale(0.95)",
+                },
+                "100%": { opacity: "1", transform: "translateY(0) scale(1)" },
+              },
+            },
+            animation: {
+              popup: "popup 0.5s ease-out forwards",
+            },
+          },
+        },
+      };
+    </script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-primary text-base font-sans">
+    <div class="max-w-6xl mx-auto px-4 py-10">
+      <div class="text-center mb-10">
+        <h1 class="text-4xl font-bold text-accent">CALCULATE YOUR (GPA)</h1>
+        <p class="text-base text-base/70 mt-2">
+          صُممت بواسطة
+          <a
+            class="text-white font-semibold"
+            href="https://wa.me/201142253560
+"
+            >Ramadan Mohammed</a
+          >
+        </p>
+      </div>
+
+      <div class="grid gap-10">
+        <div>
+          <h2 class="text-2xl text-white mb-4 border-b border-accent pb-2">
+            المواد - الترم الأول
+          </h2>
+          <table
+            class="w-full text-sm text-right bg-card text-white rounded-lg overflow-hidden"
+          >
+            <thead class="bg-accent text-black">
+              <tr>
+                <th class="p-3">المادة</th>
+                <th class="p-3">الساعات</th>
+                <th class="p-3">التقدير</th>
+              </tr>
+            </thead>
+            <tbody id="term1"></tbody>
+          </table>
+        </div>
+
+        <div>
+          <h2 class="text-2xl text-white mb-4 border-b border-accent pb-2">
+            المواد - الترم الثاني
+          </h2>
+          <table
+            class="w-full text-sm text-right bg-card text-white rounded-lg overflow-hidden"
+          >
+            <thead class="bg-accent text-black">
+              <tr>
+                <th class="p-3">المادة</th>
+                <th class="p-3">الساعات</th>
+                <th class="p-3">التقدير</th>
+              </tr>
+            </thead>
+            <tbody id="term2"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="text-center mt-10">
+        <button
+          onclick="calculateGPA()"
+          class="bg-accent hover:bg-teal-500 transition px-6 py-3 rounded text-black font-bold text-lg shadow"
+        >
+          احسب المعدل
+        </button>
+      </div>
+
+      <div
+        id="popup"
+        class="fixed inset-0 bg-black/60 hidden z-50 flex items-center justify-center"
+      >
+        <div
+          class="bg-popup text-white rounded-2xl p-8 w-full max-w-lg text-center shadow-2xl animate-popup border border-accent"
+        >
+          <h3 class="text-3xl font-bold text-accent mb-6">
+            🎓 نتائج حساب المعدل
+          </h3>
+          <div id="result" class="text-lg space-y-3"></div>
+          <button
+            onclick="document.getElementById('popup').classList.add('hidden')"
+            class="mt-8 bg-accent hover:bg-teal-600 text-black px-6 py-2 rounded-lg font-semibold transition-all duration-300"
+          >
+            إغلاق
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const optionsHTML = `
+      <option value="4.0">A+</option>
+      <option value="3.7">A</option>
+      <option value="3.3">B+</option>
+      <option value="3.0">B</option>
+      <option value="2.7">C+</option>
+      <option value="2.3">C</option>
+      <option value="2.2">D+</option>
+      <option value="2.0">D</option>
+      <option value="0">F</option>
+    `;
+
+      const subjects1 = [
+        "مبادئ الاقتصاد",
+        "مبادئ المحاسبة المالية",
+        "رياضيات الأعمال",
+        "اللغة الإنجليزية",
+        "مبادئ إدارة الأعمال",
+      ];
+      const subjects2 = [
+        "طرق ومهارات الاتصال",
+        "التفكير الابتكاري",
+        "مبادئ القانون",
+        "السلوك التنظيمي",
+        "مقدمة في علوم الحاسب",
+        "التطبيقات المكتبية والموارد الاقتصادية",
+      ];
+
+      function createRows(subjects, targetId) {
+        const tbody = document.getElementById(targetId);
+        subjects.forEach((name) => {
+          const tr = document.createElement("tr");
+          tr.className = "border-b border-gray-700";
+          tr.innerHTML = `
+          <td class="p-3">${name}</td>
+          <td class="p-3"><input type="number" value="3" readonly class="w-16 text-center bg-slate-700 text-white rounded" /></td>
+          <td class="p-3">
+            <select class="bg-slate-700 text-accent rounded w-full">${optionsHTML}</select>
+          </td>
+        `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      createRows(subjects1, "term1");
+      createRows(subjects2, "term2");
+
+      function calculateGPA() {
+        const term1 = document.querySelectorAll("#term1 tr");
+        const term2 = document.querySelectorAll("#term2 tr");
+        let totalPoints1 = 0,
+          totalHours1 = 0;
+        let totalPoints2 = 0,
+          totalHours2 = 0;
+
+        term1.forEach((row) => {
+          const hours = parseInt(row.cells[1].querySelector("input").value);
+          const grade = parseFloat(row.cells[2].querySelector("select").value);
+          if (!isNaN(grade)) {
+            totalPoints1 += hours * grade;
+            totalHours1 += hours;
+          }
+        });
+
+        term2.forEach((row) => {
+          const hours = parseInt(row.cells[1].querySelector("input").value);
+          const grade = parseFloat(row.cells[2].querySelector("select").value);
+          if (!isNaN(grade)) {
+            totalPoints2 += hours * grade;
+            totalHours2 += hours;
+          }
+        });
+
+        const gpa1 = (totalPoints1 / totalHours1).toFixed(2);
+        const gpa2 = (totalPoints2 / totalHours2).toFixed(2);
+        const totalGPA = (
+          (totalPoints1 + totalPoints2) /
+          (totalHours1 + totalHours2)
+        ).toFixed(2);
+
+        document.getElementById("result").innerHTML = `
+        <p><strong>GPA الترم الأول:</strong> ${gpa1}</p>
+        <p><strong>GPA الترم الثاني:</strong> ${gpa2}</p>
+        <p><strong>المعدل التراكمي:</strong> ${totalGPA}</p>
+        <a 
+  href="https://chat.whatsapp.com/B5yjNuHI6shCLUUQStYqYN?mode=r_t"
+  target="_blank"
+  class="inline-block text-white bg-gray-950 hover:bg-gray-900 font-bold py-3 px-6 rounded-xl shadow-lg hover:shadow-2xl transition duration-300 transform hover:scale-105 tracking-wide text-lg"
+>
+   انضم لجروب <span class="text-accent">Modern Academy 1_BIS</span>
+</a>
+
+      `;
+
+        document.getElementById("popup").classList.remove("hidden");
+      }
+    </script>
+  </body>
+</html>
