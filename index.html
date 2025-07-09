@@ -125,12 +125,16 @@
       </div>
 
       <div class="text-center mt-10">
-        <button
-          onclick="calculateGPA()"
-          class="bg-accent hover:bg-teal-500 transition px-6 py-3 rounded text-black font-bold text-lg shadow"
-        >
-          احسب المعدل
-        </button>
+    <button
+  onclick="calculateGPA(); gtag('event', 'click', {
+    event_category: 'GPA',
+    event_label: 'Calculate Button'
+  })"
+  class="bg-accent hover:bg-teal-500 transition px-6 py-3 rounded text-black font-bold text-lg shadow"
+>
+  احسب المعدل
+</button>
+
       </div>
 
       <div
@@ -239,13 +243,18 @@
         <p><strong>GPA الترم الأول:</strong> ${gpa1}</p>
         <p><strong>GPA الترم الثاني:</strong> ${gpa2}</p>
         <p><strong>المعدل التراكمي:</strong> ${totalGPA}</p>
-        <a 
+       <a 
   href="https://chat.whatsapp.com/B5yjNuHI6shCLUUQStYqYN?mode=r_t"
   target="_blank"
+  onclick="gtag('event', 'join_group', {
+    event_category: 'WhatsApp',
+    event_label: 'Group Join Link'
+  })"
   class="inline-block text-white bg-gray-950 hover:bg-gray-900 font-bold py-3 px-6 rounded-xl shadow-lg hover:shadow-2xl transition duration-300 transform hover:scale-105 tracking-wide text-lg"
 >
    انضم لجروب <span class="text-accent">Modern Academy 1_BIS</span>
 </a>
+
 
       `;
 
